@@ -22,7 +22,7 @@ class Vec3:
         'z'
     ]
 
-    def __init__(self, x: Union[float, 'Vec3', 'Vector3']=0, y: float=0, z: float=0):
+    def __init__(self, x: Union[float, 'Vec3', 'Vector3'] = 0, y: float = 0, z: float = 0):
         """
         Create a new Vec3. The x component can alternatively be another vector with an x, y, and z component, in which
         case the created vector is a copy of the given vector and the y and z parameter is ignored. Examples:
@@ -107,3 +107,19 @@ class Vec3:
         """Returns the angle to the ideal vector. Angle will be between 0 and pi."""
         cos_ang = self.dot(ideal) / (self.length() * ideal.length())
         return math.acos(cos_ang)
+
+
+def clamp2d(direction: Vec3, start: Vec3, end: Vec3) -> Vec3:
+    is_right = direction.dot(end.cross(Vec3(0, 0, -1))) < 0
+    is_left = direction.dot(start.cross(Vec3(0, 0, -1))) < 0
+
+    first_ternary = (is_right and is_left) if (
+        end.dot(start.cross(Vec3(0, 0, -1))) > 0) else (is_right or is_left)
+
+    if first_ternary:
+        return direction
+
+    if start.dot(direction) < end.dot(direction):
+        return end
+
+    return start
